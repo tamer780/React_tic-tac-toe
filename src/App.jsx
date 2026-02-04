@@ -4,14 +4,14 @@ import Player from "./components/Player.jsx";
 import Log from "./components/Log.jsx";
 import { WINNING_COMBINATIONS } from "./winning.js";
 import GameOver from "./components/GameOver.jsx";
-const INIALGAMEBOARD = [
+const INITIALGAMEBOARD = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
 
-function driveGameBoard(gameTurn) {
-  const gameBoard = [...INIALGAMEBOARD.map((row) => [...row])];
+function deriveGameBoard(gameTurn) {
+  const gameBoard = [...INITIALGAMEBOARD.map((row) => [...row])];
   for (let turn of gameTurn) {
     let { square, player } = turn;
     let { row, col } = square;
@@ -36,7 +36,7 @@ function driveWinner(gameBoard, players) {
   return winner;
 }
 
-function drivedActivePlayer(gameTurns) {
+function driveActivePlayer(gameTurns) {
   let currentPlayer = "X";
   if (gameTurns.length > 0 && gameTurns[0].player === "X") {
     currentPlayer = "O";
@@ -49,13 +49,13 @@ function App() {
     X: "Player 1",
     O: "Player 2",
   });
-  const activePlayer = drivedActivePlayer(gameTurn);
-  const gameBoard = driveGameBoard(gameTurn);
+  const activePlayer = driveActivePlayer(gameTurn);
+  const gameBoard = deriveGameBoard(gameTurn);
   const winner = driveWinner(gameBoard, players);
   const hasDraw = gameTurn.length === 9 && !winner;
   function handlePlayerActive(rowIndex, colIndex) {
     setGameTurn((prevTurn) => {
-      let currentPlayer = drivedActivePlayer(prevTurn);
+      let currentPlayer = driveActivePlayer(prevTurn);
       return [
         { square: { row: rowIndex, col: colIndex }, player: currentPlayer },
         ...prevTurn,
