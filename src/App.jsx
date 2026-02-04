@@ -10,6 +10,32 @@ const INIALGAMEBOARD = [
   [null, null, null],
 ];
 
+function driveGameBoard(gameTurn) {
+  const gameBoard = [...INIALGAMEBOARD.map((row) => [...row])];
+  for (let turn of gameTurn) {
+    let { square, player } = turn;
+    let { row, col } = square;
+    gameBoard[row][col] = player;
+  }
+  return gameBoard;
+}
+function driveWinner(gameBoard, players) {
+  let winner;
+  for (const win of WINNING_COMBINATIONS) {
+    const firstSquareSymbol = gameBoard[win[0].row][win[0].column];
+    const secondSquareSymbol = gameBoard[win[1].row][win[1].column];
+    const thridSquareSymbol = gameBoard[win[2].row][win[2].column];
+    if (
+      firstSquareSymbol &&
+      firstSquareSymbol === secondSquareSymbol &&
+      firstSquareSymbol === thridSquareSymbol
+    ) {
+      winner = players[firstSquareSymbol];
+    }
+  }
+  return winner;
+}
+
 function drivedActivePlayer(gameTurns) {
   let currentPlayer = "X";
   if (gameTurns.length > 0 && gameTurns[0].player === "X") {
@@ -23,27 +49,10 @@ function App() {
     X: "Player 1",
     O: "Player 2",
   });
-  let activePlayer = drivedActivePlayer(gameTurn);
-  let winner;
-  let gameBoard = [...INIALGAMEBOARD.map((row) => [...row])];
-  for (let turn of gameTurn) {
-    let { square, player } = turn;
-    let { row, col } = square;
-    gameBoard[row][col] = player;
-  }
-  for (const win of WINNING_COMBINATIONS) {
-    let firstSquareSymbol = gameBoard[win[0].row][win[0].column];
-    let secondSquareSymbol = gameBoard[win[1].row][win[1].column];
-    let thridSquareSymbol = gameBoard[win[2].row][win[2].column];
-    if (
-      firstSquareSymbol &&
-      firstSquareSymbol === secondSquareSymbol &&
-      firstSquareSymbol === thridSquareSymbol
-    ) {
-      winner = players[firstSquareSymbol];
-    }
-  }
-  let noWinner = gameTurn.length === 9 && !winner;
+  const activePlayer = drivedActivePlayer(gameTurn);
+  const gameBoard = driveGameBoard(gameTurn);
+  const winner = driveWinner(gameBoard, players);
+  const hasDraw = gameTurn.length === 9 && !winner;
   function handlePlayerActive(rowIndex, colIndex) {
     setGameTurn((prevTurn) => {
       let currentPlayer = drivedActivePlayer(prevTurn);
@@ -70,22 +79,22 @@ function App() {
       <div id="game-container">
         <ol id="players" className="highlight-player">
           <Player
-            name="Player1"
+            name={players.X}
             symbol="X"
             isActive={activePlayer === "X"}
             onChangeName={handlePlayerNameChange}
           />
           <Player
-            name="Player2"
+            name={players.O}
             symbol="O"
             isActive={activePlayer === "O"}
             onChangeName={handlePlayerNameChange}
           />
         </ol>
-        {(winner || noWinner) && (
+        {(winner || hasDraw) && (
           <GameOver winner={winner} onClick={handleRematch} />
         )}
-        <GameBoard selectedSquare={handlePlayerActive} board={gameBoard} />
+        <GameBoard onSelectedSquare={handlePlayerActive} board={gameBoard} />
       </div>
       <Log turns={gameTurn} />
     </main>
