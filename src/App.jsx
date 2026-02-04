@@ -19,7 +19,7 @@ function deriveGameBoard(gameTurn) {
   }
   return gameBoard;
 }
-function driveWinner(gameBoard, players) {
+function deriveWinner(gameBoard, players) {
   let winner;
   for (const win of WINNING_COMBINATIONS) {
     const firstSquareSymbol = gameBoard[win[0].row][win[0].column];
@@ -36,7 +36,7 @@ function driveWinner(gameBoard, players) {
   return winner;
 }
 
-function driveActivePlayer(gameTurns) {
+function deriveActivePlayer(gameTurns) {
   let currentPlayer = "X";
   if (gameTurns.length > 0 && gameTurns[0].player === "X") {
     currentPlayer = "O";
@@ -49,13 +49,13 @@ function App() {
     X: "Player 1",
     O: "Player 2",
   });
-  const activePlayer = driveActivePlayer(gameTurn);
+  const activePlayer = deriveActivePlayer(gameTurn);
   const gameBoard = deriveGameBoard(gameTurn);
-  const winner = driveWinner(gameBoard, players);
+  const winner = deriveWinner(gameBoard, players);
   const hasDraw = gameTurn.length === 9 && !winner;
   function handlePlayerActive(rowIndex, colIndex) {
     setGameTurn((prevTurn) => {
-      let currentPlayer = driveActivePlayer(prevTurn);
+      let currentPlayer = deriveActivePlayer(prevTurn);
       return [
         { square: { row: rowIndex, col: colIndex }, player: currentPlayer },
         ...prevTurn,
